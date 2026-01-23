@@ -38,9 +38,13 @@ public class OrderServiceImpl implements OrderService {
     private final CartRepository cartRepository;
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
+    private final UserRepository userRepository;
 
     @Override
     public OrderResponseDto placeOrder(UUID userId, PlaceOrderRequestDto request) {
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
         Cart cart = cartRepository.findByUser_Id(userId)
                 .orElseThrow(() -> new RuntimeException("Cart is empty"));
@@ -56,11 +60,34 @@ public class OrderServiceImpl implements OrderService {
         }
 
         Order order = new Order();
-        order.setUser(cart.getUser());
+        order.setUser(user);
         order.setVendor(vendor);
-        order.setSocietyName(request.getSocietyName());
-        order.setHouseNumber(request.getHouseNumber());
-        order.setPhoneNumber(request.getPhoneNumber());
+
+        // Address logic: use request if provided, otherwise default address
+        String societyName = request.getSocietyName();
+        String houseNumber = request.getHouseNumber();
+        String phoneNumber = request.getPhoneNumber();
+
+        if (societyName == null || houseNumber == null || phoneNumber == null) {
+            user.getAddresses().stream()
+                    .filter(org.pucodehackathon.backend.auth.model.UserAddress::getIsDefault)
+                    .findFirst()
+                    .ifPresent(addr -> {
+                        order.setSocietyName(request.getSocietyName() != null ? request.getSocietyName() : addr.getSociety());
+                        order.setHouseNumber(request.getHouseNumber() != null ? request.getHouseNumber() : addr.getHouseNo());
+                        order.setPhoneNumber(request.getPhoneNumber() != null ? request.getPhoneNumber() : user.getPhoneNumber());
+                    });
+        }
+
+        // Fallback if still null
+        if (order.getSocietyName() == null) order.setSocietyName(request.getSocietyName());
+        if (order.getHouseNumber() == null) order.setHouseNumber(request.getHouseNumber());
+        if (order.getPhoneNumber() == null) order.setPhoneNumber(request.getPhoneNumber() != null ? request.getPhoneNumber() : user.getPhoneNumber());
+
+        // Set mandatory fields for Order entity
+        String fullAddress = String.format("%s, %s", order.getHouseNumber(), order.getSocietyName());
+        order.setDeliveryAddress(fullAddress);
+        order.setDeliveryPhone(order.getPhoneNumber());
 
         BigDecimal total = BigDecimal.ZERO;
 
@@ -103,6 +130,9 @@ public class OrderServiceImpl implements OrderService {
                 .vendorName(order.getVendor().getBusinessName())
                 .status(order.getStatus())
                 .totalAmount(order.getTotalAmount())
+                .societyName(order.getSocietyName())
+                .houseNumber(order.getHouseNumber())
+                .phoneNumber(order.getPhoneNumber())
                 .items(
                         order.getItems().stream()
                                 .map(i -> OrderItemDto.builder()

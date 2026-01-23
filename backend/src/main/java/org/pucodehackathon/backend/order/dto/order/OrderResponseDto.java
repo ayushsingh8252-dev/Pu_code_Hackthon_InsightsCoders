@@ -16,5 +16,8 @@ public class OrderResponseDto {
     private String vendorName;
     private OrderStatus status;
     private BigDecimal totalAmount;
+    private String societyName;
+    private String houseNumber;
+    private String phoneNumber;
     private List<OrderItemDto> items;
 }
