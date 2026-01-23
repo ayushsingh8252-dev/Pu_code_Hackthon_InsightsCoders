@@ -139,6 +139,7 @@ public class VendorServiceImpl implements VendorService {
     private VendorResponseDto mapToDto(Vendor vendor) {
         return VendorResponseDto.builder()
                 .vendorId(vendor.getVendorId())
+                .userId(vendor.getUserId())
                 .businessName(vendor.getBusinessName())
                 .vendorType(vendor.getVendorType())
                 .verificationStatus(vendor.getVerificationStatus())

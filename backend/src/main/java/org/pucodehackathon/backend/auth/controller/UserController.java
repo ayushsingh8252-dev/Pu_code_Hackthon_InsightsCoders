@@ -2,7 +2,9 @@ package org.pucodehackathon.backend.auth.controller;
 
 import lombok.AllArgsConstructor;
 import org.pucodehackathon.backend.auth.dto.ApiResponse;
+import org.pucodehackathon.backend.auth.dto.UpdateUserProfileDto;
 import org.pucodehackathon.backend.auth.dto.UserDto;
+
 import org.pucodehackathon.backend.auth.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,7 +43,7 @@ public class UserController {
     //update user
     //api/v1/users/{userId}
     @PutMapping("/{userId}")
-    public ResponseEntity<UserDto> updateUser(@RequestBody UserDto userDto, @PathVariable("userId") String userId) {
+    public ResponseEntity<UserDto> updateUser(@RequestBody UpdateUserProfileDto userDto, @PathVariable("userId") String userId) {
         ApiResponse apiResponse = userService.updateUser(userDto, userId);
         return ResponseEntity.ok((UserDto) apiResponse.getData());
     }

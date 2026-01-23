@@ -1,6 +1,7 @@
 package org.pucodehackathon.backend.vendor.model;
 
 
+import com.nimbusds.openid.connect.sdk.claims.PersonClaims;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -77,5 +78,6 @@ public class Vendor {
     protected void onUpdate() {
         this.updatedAt = LocalDateTime.now();
     }
+
 
 }

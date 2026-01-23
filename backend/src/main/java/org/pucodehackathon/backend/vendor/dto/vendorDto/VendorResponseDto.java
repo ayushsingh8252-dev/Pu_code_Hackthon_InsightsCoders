@@ -14,6 +14,7 @@ import java.util.UUID;
 public class VendorResponseDto {
 
     private UUID vendorId;
+    private UUID userId;
     private String businessName;
     private VendorType vendorType;
     private VerificationStatus verificationStatus;

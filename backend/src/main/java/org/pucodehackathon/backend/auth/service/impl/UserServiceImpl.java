@@ -4,7 +4,9 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.pucodehackathon.backend.auth.dto.ApiResponse;
 import org.pucodehackathon.backend.auth.dto.ResetPasswordRequest;
+import org.pucodehackathon.backend.auth.dto.UpdateUserProfileDto;
 import org.pucodehackathon.backend.auth.dto.UserDto;
+
 import org.pucodehackathon.backend.auth.model.User;
 import org.pucodehackathon.backend.auth.repositories.UserRepository;
 import org.pucodehackathon.backend.auth.service.UserService;
@@ -40,25 +42,36 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ApiResponse updateUser(UserDto userDto, String userId) {
+    public ApiResponse updateUser(UpdateUserProfileDto userDto, String userId) {
         UUID uId = UserHelper.parseUUID(userId);
+
         User existingUser = userRepository
                 .findById(uId)
                 .orElseThrow(() -> new UserNotFoundException("User not found with given id"));
 
-        //we are not going to change email id for this project.
-        if (userDto.getFirstName() != null) existingUser.setFirstName(userDto.getFirstName());
-        if (userDto.getLastName() != null) existingUser.setLastName(userDto.getLastName());
-        if (userDto.getImage() != null) existingUser.setImage(userDto.getImage());
-        if (userDto.getProvider() != null) existingUser.setProvider(userDto.getProvider());
+        if (userDto.getFirstName() != null)
+            existingUser.setFirstName(userDto.getFirstName());
+
+        if (userDto.getLastName() != null)
+            existingUser.setLastName(userDto.getLastName());
+
+        if (userDto.getPhoneNumber() != null)
+            existingUser.setPhoneNumber(userDto.getPhoneNumber());
+
+        if (userDto.getImage() != null)
+            existingUser.setImage(userDto.getImage());
+
         existingUser.setUpdatedAt(LocalDateTime.now());
+
         User updatedUser = userRepository.save(existingUser);
+
         return ApiResponse.builder()
-                .message("User updated successfully")
                 .success(true)
-                .data(mapper.map(updatedUser, UserDto.class))
+                .message("User updated successfully")
+                .data(mapper.map(updatedUser, UserDto.class)) // response DTO is OK
                 .build();
     }
+
 
     @Transactional
     public ApiResponse resetPassword(ResetPasswordRequest request) {

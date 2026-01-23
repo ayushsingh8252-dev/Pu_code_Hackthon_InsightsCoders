@@ -1,5 +1,6 @@
 package org.pucodehackathon.backend.auth.model;
 
+import jakarta.mail.Address;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -63,6 +64,18 @@ public class User {
     )
 
     private Set<Role> roles = new HashSet<>();
+
+
+
+    @OneToMany(
+            mappedBy = "user",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private Set<UserAddress> addresses = new HashSet<>();
+
+
+
 
     @CreationTimestamp
     private LocalDateTime createdAt;
