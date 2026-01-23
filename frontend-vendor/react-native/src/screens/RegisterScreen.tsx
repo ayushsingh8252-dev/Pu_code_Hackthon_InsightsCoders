@@ -27,7 +27,7 @@ export default function RegisterScreen({ navigation }: any) {
   const [longitude, setLongitude] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const API_BASE = 'https://388dd6d89cf6.ngrok-free.app/api/v1/vendor';
+  const API_BASE = 'https://2a6717c6fa2a.ngrok-free.app/api/v1/vendor';
 
   // Registration handler
   const handleRegister = async () => {

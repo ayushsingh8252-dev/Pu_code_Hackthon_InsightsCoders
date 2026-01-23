@@ -12,7 +12,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const BASE_URL = 'https://388dd6d89cf6.ngrok-free.app';
+const BASE_URL = 'https://2a6717c6fa2a.ngrok-free.app';
 
 export default function CategoryProductsScreen() {
   const navigation = useNavigation();
@@ -123,9 +123,16 @@ const fetchProductImage = async (productId, token) => {
     <View style={styles.container}>
       {/* HEADER */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={22} />
-        </TouchableOpacity>
+        <TouchableOpacity onPress={() => {
+  if (navigation.canGoBack()) {
+    navigation.goBack();
+  } else {
+    navigation.navigate('Home'); // fallback screen
+  }
+}}>
+  <Ionicons name="arrow-back" size={22} />
+</TouchableOpacity>
+
 
         <View style={{ marginLeft: 10 }}>
           <Text style={styles.title}>{categoryName}</Text>

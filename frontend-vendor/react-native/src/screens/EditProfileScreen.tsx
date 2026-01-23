@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -15,45 +15,62 @@ import Alert from 'react-native/Libraries/Alert/Alert';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function EditProfileScreen() {
-  const navigation = useNavigation();
+  const navigation = useNavigation<any>();
   const { setIsLoggedIn, setVerificationStatus } = useAuth();
 
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+
+  // ✅ Load user data from AsyncStorage
+  useEffect(() => {
+    const loadUser = async () => {
+      try {
+        const fName = await AsyncStorage.getItem('firstName');
+        const lName = await AsyncStorage.getItem('lastName');
+        const emailStored = await AsyncStorage.getItem('email');
+        const phoneStored = await AsyncStorage.getItem('phone');
+
+        setFirstName(fName || '');
+        setLastName(lName || '');
+        setEmail(emailStored || '');
+        setPhone(phoneStored || '');
+      } catch (err) {
+        console.log('Load profile error:', err);
+      }
+    };
+
+    loadUser();
+  }, []);
+
   const handleLogout = async () => {
-  try {
-    const token = await AsyncStorage.getItem('accessToken');
+    try {
+      const token = await AsyncStorage.getItem('accessToken');
 
-    // 🔹 Call backend logout API (optional but good practice)
-    if (token) {
-      await fetch(
-        'https://388dd6d89cf6.ngrok-free.app/api/v1/auth/logout',
-        {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      if (token) {
+        await fetch(
+          'https://2a6717c6fa2a.ngrok-free.app/api/v1/auth/logout',
+          {
+            method: 'POST',
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+      }
+
+      await AsyncStorage.clear();
+      setIsLoggedIn(false);
+      setVerificationStatus(null);
+
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'Login' }],
+      });
+    } catch (error) {
+      console.error('Logout error:', error);
+      Alert.alert('Error', 'Logout failed. Please try again.');
     }
-
-    // 🔹 Clear local storage
-    await AsyncStorage.clear();
-
-    // 🔹 Reset auth state
-    setIsLoggedIn(false);
-    setVerificationStatus(null);
-
-    // 🔹 HARD RESET navigation → Login
-    navigation.reset({
-      index: 0,
-      routes: [{ name: 'Login' }],
-    });
-
-  } catch (error) {
-    console.error('Logout error:', error);
-    Alert.alert('Error', 'Logout failed. Please try again.');
-  }
-};
-
+  };
 
   return (
     <View style={styles.container}>
@@ -80,16 +97,14 @@ export default function EditProfileScreen() {
               <Ionicons name="pencil" size={16} color="#fff" />
             </TouchableOpacity>
           </View>
-
-          <Text style={styles.userId}>User ID : 36548-4771-4969-ae4c-3e9f9e5f4ad6</Text>
         </View>
 
         {/* Form */}
         <View style={styles.form}>
-          <Input label="FIRST NAME" value="John" />
-          <Input label="LAST NAME" value="Doe" />
-          <Input label="EMAIL ADDRESS" value="johndoe@gmail.com" />
-          <Input label="PHONE" value="+1 (555) 000-000" />
+          <Input label="FIRST NAME" value={firstName} onChange={setFirstName} />
+          <Input label="LAST NAME" value={lastName} onChange={setLastName} />
+          <Input label="EMAIL ADDRESS" value={email} onChange={setEmail} />
+          <Input label="PHONE" value={phone} onChange={setPhone} />
 
           <TouchableOpacity style={styles.saveButton}>
             <Text style={styles.saveText}>Save Changes</Text>
@@ -106,21 +121,29 @@ export default function EditProfileScreen() {
 }
 
 /* Reusable Input */
-const Input = ({ label, value }: { label: string; value: string }) => (
+const Input = ({
+  label,
+  value,
+  onChange,
+}: {
+  label: string;
+  value: string;
+  onChange: (text: string) => void;
+}) => (
   <View style={styles.inputGroup}>
     <Text style={styles.label}>{label}</Text>
     <TextInput
       value={value}
+      onChangeText={onChange}
       style={styles.input}
+      placeholder={label}
       placeholderTextColor="#94a3b8"
     />
   </View>
 );
+
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f8fafc',
-  },
+  container: { flex: 1, backgroundColor: '#f8fafc' },
 
   header: {
     flexDirection: 'row',
@@ -134,18 +157,9 @@ const styles = StyleSheet.create({
     color: '#111827',
   },
 
-  profileSection: {
-    alignItems: 'center',
-    marginVertical: 20,
-  },
-  imageWrapper: {
-    position: 'relative',
-  },
-  avatar: {
-    width: 96,
-    height: 96,
-    borderRadius: 48,
-  },
+  profileSection: { alignItems: 'center', marginVertical: 20 },
+  imageWrapper: { position: 'relative' },
+  avatar: { width: 96, height: 96, borderRadius: 48 },
   editIcon: {
     position: 'absolute',
     bottom: 4,
@@ -157,11 +171,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  userId: {
-    fontSize: 11,
-    color: '#94a3b8',
-    marginTop: 10,
-  },
 
   form: {
     backgroundColor: '#fff',
@@ -169,9 +178,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     padding: 16,
   },
-  inputGroup: {
-    marginBottom: 14,
-  },
+  inputGroup: { marginBottom: 14 },
   label: {
     fontSize: 11,
     fontWeight: '600',
@@ -194,11 +201,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 10,
   },
-  saveText: {
-    fontSize: 15,
-    fontWeight: '700',
-    color: '#fff',
-  },
+  saveText: { fontSize: 15, fontWeight: '700', color: '#fff' },
 
   logoutButton: {
     marginTop: 14,
@@ -211,9 +214,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 6,
   },
-  logoutText: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#ef4444',
-  },
+  logoutText: { fontSize: 14, fontWeight: '600', color: '#ef4444' },
 });

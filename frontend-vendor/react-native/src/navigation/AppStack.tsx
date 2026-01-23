@@ -51,8 +51,8 @@ export default function AppStack() {
 />
       <Stack.Screen name="AddProductImage" component={AddProductImageScreen} />
       <Stack.Screen name="EditProfile" component={EditProfileScreen} />
-      <Stack.screen name="Insights" component={InsightsScreen} />
-      <Stack.screen name="Orders" component={OrdersScreen} />
+      <Stack.Screen name="Insights" component={InsightsScreen} />
+      <Stack.Screen name="Orders" component={OrdersScreen} />
     </Stack.Navigator>
   );
 }

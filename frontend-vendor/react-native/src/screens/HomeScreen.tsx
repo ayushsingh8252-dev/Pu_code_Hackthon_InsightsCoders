@@ -68,7 +68,7 @@ export default function HomeScreen() {
       }
 
       const response = await fetch(
-        'https://db73420c7ac3.ngrok-free.app/api/v1/vendor/categories',
+        'https://2a6717c6fa2a.ngrok-free.app/api/v1/vendor/categories',
         {
           method: 'POST',
           headers: {
@@ -120,7 +120,7 @@ useEffect(() => {
 
       // 1️⃣ Fetch categories
       const catRes = await fetch(
-        'https://388dd6d89cf6.ngrok-free.app/api/v1/vendor/categories?page=0&size=10',
+        'https://2a6717c6fa2a.ngrok-free.app/api/v1/vendor/categories?page=0&size=10',
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -135,7 +135,7 @@ useEffect(() => {
       const mappedCategories = await Promise.all(
         catData.content.map(async cat => {
           const prodRes = await fetch(
-            `https://388dd6d89cf6.ngrok-free.app/api/v1/vendor/products?categoryId=${cat.categoryId}`,
+            `https://2a6717c6fa2a.ngrok-free.app/api/v1/vendor/products?categoryId=${cat.categoryId}`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
