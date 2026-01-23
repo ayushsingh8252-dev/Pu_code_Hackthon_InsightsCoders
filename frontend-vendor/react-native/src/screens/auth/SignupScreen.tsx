@@ -31,7 +31,7 @@ export default function SignupScreen({ navigation }: any) {
 
     try {
       const response = await fetch(
-        'https://388dd6d89cf6.ngrok-free.app/api/v1/auth/signup',
+        'https://2a6717c6fa2a.ngrok-free.app/api/v1/auth/signup',
         {
           method: 'POST',
           headers: {

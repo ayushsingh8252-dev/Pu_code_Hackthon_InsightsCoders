@@ -17,7 +17,7 @@ export default function LoginScreen({ navigation }: any) {
   const [loading, setLoading] = useState(false);
 
   const { setIsLoggedIn, setVerificationStatus } = useAuth();
-  const API_BASE = 'https://388dd6d89cf6.ngrok-free.app/api/v1/auth';
+  const API_BASE = 'https://2a6717c6fa2a.ngrok-free.app/api/v1/auth';
 
   const handleLogin = async () => {
   if (!email || !password) {

@@ -3,7 +3,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const API_BASE = 'https://388dd6d89cf6.ngrok-free.app/api/v1/users';
+const API_BASE = 'https://2a6717c6fa2a.ngrok-free.app/api/v1/users';
 
 export default function WaitingApprovalScreen({ navigation }: any) {
   useEffect(() => {

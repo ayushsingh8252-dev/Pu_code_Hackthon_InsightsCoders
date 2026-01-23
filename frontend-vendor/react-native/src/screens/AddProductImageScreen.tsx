@@ -62,7 +62,7 @@ export default function AddProductImageScreen() {
 
 
       const res = await fetch(
-        `https://388dd6d89cf6.ngrok-free.app/api/v1/vendor/products/${productId}/images`,
+        `https://2a6717c6fa2a.ngrok-free.app/api/v1/vendor/products/${productId}/images`,
         {
           method: 'POST',
           headers: {

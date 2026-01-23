@@ -1,6 +1,5 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-
 import HomeScreen from '../screens/HomeScreen';
 import VendorDetailsScreen from '../screens/VendorDetailsScreen';
 import OrderFlowScreen from '../screens/OrderFlowScreen';
@@ -10,6 +9,8 @@ import CategoryProductsScreen from '../screens/CategoryProductsScreen';
 import AddProductScreen from '../screens/AddProductScreen';
 import AddProductImageScreen from '../screens/AddProductImageScreen';
 import EditProfileScreen from '../screens/EditProfileScreen';
+import InsightsScreen from '../screens/InsightsScreen';
+import OrdersScreen from '../screens/OrdersScreen';
 
 export type AppStackParamList = {
   Home: undefined;
@@ -50,7 +51,8 @@ export default function AppStack() {
 />
       <Stack.Screen name="AddProductImage" component={AddProductImageScreen} />
       <Stack.Screen name="EditProfile" component={EditProfileScreen} />
-
+      <Stack.Screen name="Insights" component={InsightsScreen} />
+      <Stack.Screen name="Orders" component={OrdersScreen} />
     </Stack.Navigator>
   );
 }

@@ -1,4 +1,4 @@
-import React,{ useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -12,83 +12,64 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Alert from 'react-native/Libraries/Alert/Alert';
 import { useAuth } from '../context/AuthContext';
 
-
 export default function UserAccountScreen() {
   const navigation = useNavigation<any>();
-  const [vendor, setVendor] = useState<any>(null);
-const [loading, setLoading] = useState(true);
-const { setIsLoggedIn, setVerificationStatus } = useAuth();
+  const { setIsLoggedIn, setVerificationStatus } = useAuth();
 
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [role, setRole] = useState('Vendor');
 
-const handleLogout = async () => {
-  try {
-    const token = await AsyncStorage.getItem('accessToken');
+  // ✅ Load user data from AsyncStorage
+  useEffect(() => {
+    const loadUser = async () => {
+      try {
+        const fName = await AsyncStorage.getItem('firstName');
+        const lName = await AsyncStorage.getItem('lastName');
+        const verificationStatus = await AsyncStorage.getItem('verificationStatus');
 
-    // 🔹 Call backend logout API (optional but good practice)
-    if (token) {
-      await fetch(
-        'https://388dd6d89cf6.ngrok-free.app/api/v1/auth/logout',
-        {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-    }
+        setFirstName(fName || '');
+        setLastName(lName || '');
+        setRole(verificationStatus === 'APPROVED' ? 'Vendor' : 'Pending Vendor');
+      } catch (err) {
+        console.log('Load user error:', err);
+      }
+    };
 
-    // 🔹 Clear local storage
-    await AsyncStorage.clear();
+    loadUser();
+  }, []);
 
-    // 🔹 Reset auth state
-    setIsLoggedIn(false);
-    setVerificationStatus(null);
-
-    // 🔹 HARD RESET navigation → Login
-    navigation.reset({
-      index: 0,
-      routes: [{ name: 'Login' }],
-    });
-
-  } catch (error) {
-    console.error('Logout error:', error);
-    Alert.alert('Error', 'Logout failed. Please try again.');
-  }
-};
-
-
-useEffect(() => {
-  const fetchVendor = async () => {
+  // ✅ Logout
+  const handleLogout = async () => {
     try {
       const token = await AsyncStorage.getItem('accessToken');
-      if (!token) return;
 
-      const res = await fetch(
-        'https://388dd6d89cf6.ngrok-free.app/api/v1/vendor/me',
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      if (!res.ok) {
-        const text = await res.text();
-        console.log('Vendor API error:', text);
-        return;
+      if (token) {
+        await fetch(
+          'https://2a6717c6fa2a.ngrok-free.app/api/v1/auth/logout',
+          {
+            method: 'POST',
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
       }
 
-      const data = await res.json();
-      setVendor(data);
-    } catch (err) {
-      console.error('Fetch vendor error:', err);
-    } finally {
-      setLoading(false);
+      await AsyncStorage.clear();
+
+      setIsLoggedIn(false);
+      setVerificationStatus(null);
+
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'Login' }],
+      });
+    } catch (error) {
+      console.error('Logout error:', error);
+      Alert.alert('Error', 'Logout failed. Please try again.');
     }
   };
-
-  fetchVendor();
-}, []);
 
   const SettingItem = ({
     icon,
@@ -98,17 +79,15 @@ useEffect(() => {
     icon: string;
     label: string;
     onPress?: () => void;
-  }) => {
-    return (
-      <TouchableOpacity style={styles.item} onPress={onPress}>
-        <View style={styles.itemLeft}>
-          <Ionicons name={icon} size={20} color="#22c55e" />
-          <Text style={styles.itemText}>{label}</Text>
-        </View>
-        <Ionicons name="chevron-forward" size={20} color="#94a3b8" />
-      </TouchableOpacity>
-    );
-  };
+  }) => (
+    <TouchableOpacity style={styles.item} onPress={onPress}>
+      <View style={styles.itemLeft}>
+        <Ionicons name={icon} size={20} color="#22c55e" />
+        <Text style={styles.itemText}>{label}</Text>
+      </View>
+      <Ionicons name="chevron-forward" size={20} color="#94a3b8" />
+    </TouchableOpacity>
+  );
 
   return (
     <View style={styles.container}>
@@ -126,41 +105,35 @@ useEffect(() => {
       </View>
 
       {/* Profile */}
-      {/* Profile */}
-<View style={styles.profile}>
-  <TouchableOpacity
-    style={styles.avatarWrapper}
-    onPress={() => navigation.navigate('EditProfile')}
-    activeOpacity={0.8}
-  >
-    <Image
-      source={{
-        uri: 'https://images.unsplash.com/photo-1552374196-c4e7ffc6e126?w=200',
-      }}
-      style={styles.avatar}
-    />
+      <View style={styles.profile}>
+        <TouchableOpacity
+          style={styles.avatarWrapper}
+          onPress={() => navigation.navigate('EditProfile')}
+          activeOpacity={0.8}
+        >
+          <Image
+            source={{
+              uri: 'https://images.unsplash.com/photo-1552374196-c4e7ffc6e126?w=200',
+            }}
+            style={styles.avatar}
+          />
 
-    {/* Pencil Icon */}
-    <View style={styles.editIcon}>
-      <Ionicons name="pencil" size={14} color="#fff" />
-    </View>
-  </TouchableOpacity>
+          <View style={styles.editIcon}>
+            <Ionicons name="pencil" size={14} color="#fff" />
+          </View>
+        </TouchableOpacity>
 
-  <Text style={styles.name}>
-  {vendor?.firstName} {vendor?.lastName}
-</Text>
+        <Text style={styles.name}>
+          {firstName} {lastName}
+        </Text>
 
-<Text style={styles.status}>
-  {vendor?.role || 'Vendor'}
-</Text>
+        <Text style={styles.status}>{role}</Text>
 
-
-  <View style={styles.onlineRow}>
-    <View style={styles.onlineDot} />
-    <Text style={styles.onlineText}>Online</Text>
-  </View>
-</View>
-
+        <View style={styles.onlineRow}>
+          <View style={styles.onlineDot} />
+          <Text style={styles.onlineText}>Online</Text>
+        </View>
+      </View>
 
       {/* Settings */}
       <View style={styles.list}>
@@ -193,10 +166,7 @@ useEffect(() => {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f8fafc',
-  },
+  container: { flex: 1, backgroundColor: '#f8fafc' },
 
   header: {
     flexDirection: 'row',
@@ -290,21 +260,19 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#ef4444',
   },
-  avatarWrapper: {
-  position: 'relative',
-},
 
-editIcon: {
-  position: 'absolute',
-  bottom: 2,
-  right: 2,
-  backgroundColor: '#22c55e',
-  width: 26,
-  height: 26,
-  borderRadius: 13,
-  alignItems: 'center',
-  justifyContent: 'center',
-  borderWidth: 2,
-  borderColor: '#fff',
-},
+  avatarWrapper: { position: 'relative' },
+  editIcon: {
+    position: 'absolute',
+    bottom: 2,
+    right: 2,
+    backgroundColor: '#22c55e',
+    width: 26,
+    height: 26,
+    borderRadius: 13,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 2,
+    borderColor: '#fff',
+  },
 });
