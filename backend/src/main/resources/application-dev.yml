@@ -1,0 +1,87 @@
+spring:
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    jpa:
+      hibernate:
+        ddl-auto: validate
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+
+  mail:
+    host: smtp.gmail.com
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    port: 587
+    properties:
+      mail:
+        SMTP:
+          auth: true
+          STARTTLS:
+            enable: true
+            required: true
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        format_sql: true
+#    show-sql: true
+
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID:test-client-id}
+            client-secret: ${GOOGLE_CLIENT_SECRET:test-client-secret}
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+            scope:
+              - email
+              - profile
+              - openid
+
+          github:
+            client-id: ${GITHUB_CLIENT_ID:test-client-id}
+            client-secret: ${GITHUB_CLIENT_SECRET:test-client-secret}
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+            scope:
+              - user:email
+              - read:user
+
+otp:
+  length: 6
+  expiration: 300000
+
+#logging:
+#  level:
+#    org.springframework.security: DEBUG
+
+security:
+  jwt:
+    secret: ${JWT_SECRET:saiofal;vkasfbehwqpofhjashofjaswfpojasfvbafop[hfifonfo[shjfwefjjfslajfsahfoshffasnbash[f}
+    issuer: ${JWT_ISSUER:api.substring.com}
+    access-ttl-seconds: ${JWT_ACCESS_TTL_SECONDS:3600}
+    refresh-ttl-seconds: ${JWT_REFRESH_TTL_SECONDS:86400}
+    refresh-token-cookie-name: ${JWT_REFRESH_COOKIE_NAME:refreshToken}
+    cookie-secure: ${JWT_COOKIE_SECURE:true}
+    cookie-http-only: ${JWT_COOKIE_HTTP_ONLY:true}
+    cookie-same-site: ${JWT_COOKIE_SAME_SITE:lax}
+    cookie-domain: ${JWT_COOKIE_DOMAIN:localhost}
+
+app:
+  cors:
+    front-end-url: http://localhost:5173
+  auth:
+    frontend:
+      success-redirect: http://localhost:5173/oauth/success
+      failure-redirect: http://localhost:5173/oauth/failure
+
+cloudinary:
+  cloud-name: dfzalhdva
+  api-key: 398939341869887
+  api-secret: gwKOxZ6cTdXYnQzm0nVGaggWBbo
