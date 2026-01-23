@@ -2,8 +2,9 @@ package org.pucodehackathon.backend.auth.controller;
 
 import lombok.AllArgsConstructor;
 import org.pucodehackathon.backend.auth.dto.ApiResponse;
+import org.pucodehackathon.backend.auth.dto.UpdateUserProfileDto;
 import org.pucodehackathon.backend.auth.dto.UserDto;
-import org.pucodehackathon.backend.auth.dto.user.UpdateUserProfileDto;
+
 import org.pucodehackathon.backend.auth.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -3,8 +3,9 @@ package org.pucodehackathon.backend.auth.service;
 
 import org.pucodehackathon.backend.auth.dto.ApiResponse;
 import org.pucodehackathon.backend.auth.dto.ResetPasswordRequest;
+import org.pucodehackathon.backend.auth.dto.UpdateUserProfileDto;
 import org.pucodehackathon.backend.auth.dto.UserDto;
-import org.pucodehackathon.backend.auth.dto.user.UpdateUserProfileDto;
+
 
 public interface UserService {
 

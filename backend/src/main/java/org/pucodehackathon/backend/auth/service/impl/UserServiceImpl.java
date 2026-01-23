@@ -4,8 +4,9 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.pucodehackathon.backend.auth.dto.ApiResponse;
 import org.pucodehackathon.backend.auth.dto.ResetPasswordRequest;
+import org.pucodehackathon.backend.auth.dto.UpdateUserProfileDto;
 import org.pucodehackathon.backend.auth.dto.UserDto;
-import org.pucodehackathon.backend.auth.dto.user.UpdateUserProfileDto;
+
 import org.pucodehackathon.backend.auth.model.User;
 import org.pucodehackathon.backend.auth.repositories.UserRepository;
 import org.pucodehackathon.backend.auth.service.UserService;
