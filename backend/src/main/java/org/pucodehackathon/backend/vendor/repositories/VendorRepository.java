@@ -17,4 +17,5 @@ public interface VendorRepository extends JpaRepository<Vendor, UUID> {
     List<Vendor> findByVerificationStatus(VerificationStatus verificationStatus);
     Optional<Vendor> findByVendorId(UUID vendorId);
     Page<Vendor> findAll(Specification<Vendor> spec, Pageable pageable);
+
 }

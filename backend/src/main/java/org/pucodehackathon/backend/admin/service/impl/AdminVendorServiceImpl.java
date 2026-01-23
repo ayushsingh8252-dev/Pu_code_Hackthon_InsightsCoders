@@ -37,7 +37,7 @@ public class AdminVendorServiceImpl implements AdminVendorService {
     @Override
     @Transactional
     public AdminVendorActionResponseDto approveVendor(UUID vendorId) {
-        Vendor vendor = vendorRepository.findByUserId(vendorId).orElseThrow(
+        Vendor vendor = vendorRepository.findByVendorId(vendorId).orElseThrow(
                 ()-> new VendorNotFoundException("Vendor Is not Found by this id " + vendorId)
         );
 

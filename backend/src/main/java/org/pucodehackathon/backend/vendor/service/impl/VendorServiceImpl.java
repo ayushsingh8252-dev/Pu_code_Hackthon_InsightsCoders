@@ -6,6 +6,7 @@ import org.pucodehackathon.backend.auth.repositories.UserRepository;
 import org.pucodehackathon.backend.exception.vendor_exceptions.VendorNotFoundException;
 import org.pucodehackathon.backend.vendor.dto.VendorRegistrationRequestDto;
 import org.pucodehackathon.backend.vendor.dto.VendorRegistrationResponseDto;
+import org.pucodehackathon.backend.vendor.dto.vendorDto.VendorLinkedUserDto;
 import org.pucodehackathon.backend.vendor.dto.vendorDto.VendorResponseDto;
 import org.pucodehackathon.backend.vendor.model.Vendor;
 import org.pucodehackathon.backend.vendor.model.VendorLocation;
@@ -103,6 +104,37 @@ public class VendorServiceImpl implements VendorService {
 
         return mapToDto(vendor);
     }
+
+
+    @Override
+    public VendorLinkedUserDto getUserByVendorId(UUID loggedInUserId, UUID vendorId) {
+        // Vendor of logged-in user
+        Vendor loggedInVendor = vendorRepository.findByUserId(loggedInUserId)
+                .orElseThrow(() -> new AccessDeniedException("Vendor not found"));
+
+        if (!loggedInVendor.getVendorId().equals(vendorId)) {
+            throw new AccessDeniedException("You are not allowed to access this vendor");
+        }
+
+        if (loggedInVendor.getVerificationStatus() != VerificationStatus.APPROVED) {
+            throw new AccessDeniedException("Vendor not approved");
+        }
+
+        User user = userRepository.findById(loggedInVendor.getUserId())
+                .orElseThrow(() -> new IllegalStateException("User not found"));
+
+        return VendorLinkedUserDto.builder()
+                .userId(user.getId())
+                .email(user.getEmail())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .phoneNumber(user.getPhoneNumber())
+                .isEnabled(user.isEnabled())
+                .isEmailVerified(user.isEmailVerified())
+                .build();
+    }
+
+
 
     private VendorResponseDto mapToDto(Vendor vendor) {
         return VendorResponseDto.builder()
