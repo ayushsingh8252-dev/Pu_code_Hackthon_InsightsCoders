@@ -1,0 +1,35 @@
+{
+  "expo": {
+    "name": "Vendor Digital Presence",
+    "slug": "vendor-digital-presence",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./src/icons/VendorHub-logo.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./src/icons/VendorHub-logo.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#16a34a"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.vendordigitalpresence.app"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./src/icons/VendorHub-logo.png",
+        "backgroundColor": "#16a34a"
+      },
+      "package": "com.vendordigitalpresence.app",
+      "permissions": [
+        "INTERNET"
+      ]
+    },
+    "web": {
+      "favicon": "./src/icons/VendorHub-logo.pngr"
+    }
+  }
+}

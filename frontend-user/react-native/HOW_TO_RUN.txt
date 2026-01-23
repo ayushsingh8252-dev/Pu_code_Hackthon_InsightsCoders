@@ -1,0 +1,273 @@
+================================================================================
+  VENDOR DIGITAL PRESENCE PLATFORM - REACT NATIVE (ANDROID)
+  How to Run This Application
+================================================================================
+
+📋 PREREQUISITES
+================================================================================
+
+You need the following installed on your computer:
+
+1. Node.js (version 18 or higher)
+   Download from: https://nodejs.org/
+
+2. npm (comes with Node.js)
+   Check version: npm --version
+
+3. EITHER:
+   Option A: Android Studio with Android Emulator
+   Option B: Android phone with "Expo Go" app from Play Store
+
+
+📥 INSTALLATION STEPS
+================================================================================
+
+Step 1: Open Terminal/Command Prompt
+-------------------------------------
+- Windows: Press Win + R, type "cmd", press Enter
+- Mac: Press Cmd + Space, type "terminal", press Enter
+- Linux: Press Ctrl + Alt + T
+
+
+Step 2: Navigate to Project Folder
+-----------------------------------
+cd react-native
+
+(Replace "react-native" with the actual path if different)
+
+
+Step 3: Install Dependencies
+-----------------------------
+npm install
+
+This will take 2-5 minutes depending on your internet speed.
+You should see a progress bar and installation messages.
+
+
+Step 4: Start Development Server
+---------------------------------
+npm start
+
+You will see:
+- QR code displayed in terminal
+- Message: "Metro waiting on exp://..."
+- Options menu with keyboard shortcuts
+
+
+🚀 RUNNING ON ANDROID
+================================================================================
+
+METHOD 1: Using Android Emulator
+---------------------------------
+1. Make sure Android Studio is installed
+2. Open Android Studio → AVD Manager
+3. Start your Android Virtual Device (emulator)
+4. Wait for emulator to fully boot
+5. In the terminal where you ran "npm start", press: a
+
+The app will install and launch automatically.
+
+
+METHOD 2: Using Physical Android Device
+----------------------------------------
+1. Download "Expo Go" from Google Play Store
+2. Connect your phone to the SAME WiFi as your computer
+3. Open "Expo Go" app
+4. Tap "Scan QR Code"
+5. Scan the QR code shown in your terminal
+
+The app will load on your device.
+
+
+⚠️ TROUBLESHOOTING
+================================================================================
+
+Problem: "Command not found: npm"
+Solution: Install Node.js from https://nodejs.org/
+
+Problem: "Metro bundler won't start"
+Solution: 
+  expo start -c
+  (This clears the cache)
+
+Problem: "Cannot connect to development server"
+Solution:
+  - Make sure computer and phone are on same WiFi
+  - Disable firewall temporarily
+  - Try: expo start --tunnel
+
+Problem: Android emulator not detected
+Solution:
+  - Make sure emulator is running BEFORE pressing 'a'
+  - Check if ANDROID_HOME environment variable is set
+  - Restart Android Studio
+
+Problem: Dependencies installation failed
+Solution:
+  rm -rf node_modules
+  rm package-lock.json
+  npm install
+
+
+🎯 WHAT YOU SHOULD SEE
+================================================================================
+
+After successful launch, the app displays:
+
+HOME SCREEN:
+✓ Green header with "Deliver to Saket, New Delhi"
+✓ Profile icon (top-right)
+✓ Categories: All, Fruits, Vegetables
+✓ Popular Picks section with 3 items
+✓ List of 4 vendors with images
+✓ Bottom navigation (Home, Orders, Profile)
+
+You can:
+1. Tap any vendor to see details
+2. Tap "Place Order" to start shopping
+3. Add products to cart
+4. Complete checkout
+5. View orders in Profile tab
+6. Create support tickets
+
+
+📁 FILE LOCATIONS
+================================================================================
+
+Main App File:        /App.tsx
+Home Screen:          /src/screens/HomeScreen.tsx
+Vendor Details:       /src/screens/VendorDetailsScreen.tsx
+Order Flow:           /src/screens/OrderFlowScreen.tsx
+User Account:         /src/screens/UserAccountScreen.tsx
+Bottom Navigation:    /src/components/BottomNavigation.tsx
+Dependencies:         /package.json
+Configuration:        /app.json
+
+
+🔄 DEVELOPMENT WORKFLOW
+================================================================================
+
+1. START SERVER:
+   npm start
+
+2. MAKE CHANGES:
+   Edit files in /src folder
+
+3. SEE CHANGES:
+   Changes appear automatically (Fast Refresh)
+   Shake device or press Ctrl+M to reload
+
+4. DEBUG:
+   console.log() messages appear in terminal
+
+5. STOP SERVER:
+   Press Ctrl + C in terminal
+
+
+💡 USEFUL COMMANDS
+================================================================================
+
+npm start              # Start development server
+npm run android        # Run on Android
+expo start -c          # Start with cache cleared
+expo start --tunnel    # Use tunnel connection (slower but reliable)
+
+
+📱 TESTING THE APP
+================================================================================
+
+Test these features to ensure everything works:
+
+□ Browse vendors on home screen
+□ Filter by category (Fruits/Vegetables)
+□ Sort by distance or rating
+□ Tap a vendor to view details
+□ View products with Hindi/English names
+□ Tap "Place Order" button
+□ Add products to cart (+ and - buttons)
+□ Go through 3-step checkout:
+  - Step 1: Select products
+  - Step 2: Review cart
+  - Step 3: Confirm order
+□ See success message
+□ Go to Profile tab
+□ View Orders tab
+□ Tap "View Details" on an order
+□ Cancel an order
+□ Go to Support tab
+□ Create a new support ticket
+□ See progress bar on tickets
+□ Go to Saved tab
+□ View saved vendors
+□ Go to Profile tab
+□ Edit profile information
+
+
+🏗️ BUILDING APK FOR DISTRIBUTION
+================================================================================
+
+To create an APK file for installation on any Android device:
+
+1. Install EAS CLI:
+   npm install -g eas-cli
+
+2. Login to Expo:
+   eas login
+
+3. Build APK:
+   eas build -p android --profile preview
+
+4. Download APK:
+   You'll receive a link to download the APK file
+
+5. Install APK:
+   Transfer APK to Android device and install
+
+
+📚 MORE HELP
+================================================================================
+
+For detailed documentation, see:
+- README.md          - Complete project documentation
+- SETUP_GUIDE.md     - Detailed setup instructions
+- QUICK_START.md     - Quick reference guide
+- FILE_STRUCTURE.md  - Complete file breakdown
+
+Online Resources:
+- React Native: https://reactnative.dev/
+- Expo: https://docs.expo.dev/
+- React Navigation: https://reactnavigation.org/
+
+
+✅ SUCCESS CHECKLIST
+================================================================================
+
+You're ready when you can:
+□ Run "npm start" without errors
+□ See the app on Android emulator or device
+□ Navigate between screens
+□ Complete an order
+□ Create a support ticket
+□ Edit profile information
+
+
+🎉 CONGRATULATIONS!
+================================================================================
+
+Your React Native app is now running!
+
+This is a fully functional Android application with:
+✓ Vendor discovery
+✓ Product browsing
+✓ Shopping cart
+✓ Order management
+✓ Customer support system
+✓ User account management
+
+All features are working with sample data.
+
+
+================================================================================
+For questions or issues, check the troubleshooting section above
+or refer to the documentation files in this directory.
+================================================================================
