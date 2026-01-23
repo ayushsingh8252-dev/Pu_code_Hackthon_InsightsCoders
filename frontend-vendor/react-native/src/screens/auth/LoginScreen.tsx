@@ -20,76 +20,75 @@ export default function LoginScreen({ navigation }: any) {
   const API_BASE = 'https://2a6717c6fa2a.ngrok-free.app/api/v1/auth';
 
   const handleLogin = async () => {
-    if (!email || !password) {
-      Alert.alert('Error', 'Email and Password are required');
+  if (!email || !password) {
+    Alert.alert('Error', 'Email and Password are required');
+    return;
+  }
+
+  try {
+    setLoading(true);
+
+    const payload = {
+      email: email.trim().toLowerCase(),
+      password,
+    };
+
+    console.log('Sending login request:', payload);
+
+    const response = await fetch(`${API_BASE}/login`, {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
+
+    const rawText = await response.text();
+console.log('RAW LOGIN RESPONSE:', rawText);
+
+let data;
+try {
+  data = JSON.parse(rawText);
+} catch (e) {
+  Alert.alert('Server Error', rawText);
+  return;
+}
+    console.log('Login response:', response.status, data);
+
+    if (!response.ok || data.success !== true) {
+      Alert.alert('Error', data.message || 'Invalid email or password');
       return;
     }
 
-    try {
-      setLoading(true);
+    // ✅ Save tokens and set auth state
+    await AsyncStorage.multiSet([
+      ['accessToken', data.data.accessToken],
+      ['refreshToken', data.data.refreshToken],
+      ['loginTime', Date.now().toString()],
+      ['verificationStatus', 'APPROVED'],
+      ['userId', data.data.user.id],
+       ['firstName', data.data.user.firstName],
+       ['lastName', data.data.user.lastName],
+    ]);
 
-      const payload = {
-        email: email.trim().toLowerCase(),
-        password,
-      };
+    setVerificationStatus('APPROVED');
+    setIsLoggedIn(true);
 
-      console.log('Sending login request:', payload);
+    // ✅ Navigate
+    navigation.reset({
+      index: 0,
+      routes: [{ name: 'Home' }],
+    });
 
-      const response = await fetch(`${API_BASE}/login`, {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
-        },
-        body: JSON.stringify(payload),
-      });
+  } catch (err) {
+    console.log(err);
+    Alert.alert('Error', 'Something went wrong');
+  } finally {
+    setLoading(false);
+  }
+};
 
-      const data = await response.json();
-      console.log('Login response:', response.status, data);
-
-      if (!response.ok) {
-        // 401 or other errors
-        Alert.alert('Error', data.message || 'Invalid email or password');
-        return;
-      }
-
-      // ✅ Determine vendor verification status
-      let verificationStatus: 'APPROVED' | 'PENDING' | null = null;
-      if (data.data.vendor) {
-        verificationStatus = data.data.vendor.verificationStatus; // APPROVED or PENDING
-      }
-
-      // ✅ Save tokens and user info
-      await AsyncStorage.multiSet([
-        ['accessToken', data.data.accessToken],
-        ['refreshToken', data.data.refreshToken],
-        ['loginTime', Date.now().toString()],
-        ['verificationStatus', verificationStatus || 'PENDING'],
-        ['userId', data.data.user.id],
-        ['firstName', data.data.user.firstName],
-        ['lastName', data.data.user.lastName],
-        ['email', data.data.user.email],
-['phone', data.data.user.phone || ''],
-
-      ]);
-
-      setVerificationStatus(verificationStatus);
-      setIsLoggedIn(true);
-
-      // ✅ Navigate based on verification
-      if (verificationStatus === 'APPROVED') {
-        navigation.reset({ index: 0, routes: [{ name: 'Home' }] });
-      } else {
-        navigation.reset({ index: 0, routes: [{ name: 'Register' }] });
-      }
-
-    } catch (err) {
-      console.log(err);
-      Alert.alert('Error', 'Something went wrong');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   return (
     <View style={styles.container}>
@@ -122,12 +121,17 @@ export default function LoginScreen({ navigation }: any) {
         )}
       </TouchableOpacity>
 
+      {/* ---------------- ADD LINKS ---------------- */}
       <View style={styles.linkContainer}>
-        <TouchableOpacity onPress={() => navigation.navigate('ForgotPassword')}>
+        <TouchableOpacity
+          onPress={() => navigation.navigate('ForgotPassword')}
+        >
           <Text style={styles.linkText}>Forgot Password?</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
+        <TouchableOpacity
+          onPress={() => navigation.navigate('Signup')}
+        >
           <Text style={styles.linkText}>Create New Account</Text>
         </TouchableOpacity>
       </View>
@@ -142,6 +146,13 @@ const styles = StyleSheet.create({
   input: { borderWidth: 1, borderRadius: 8, padding: 12, marginBottom: 12 },
   button: { backgroundColor: '#16a34a', padding: 14, borderRadius: 8 },
   buttonText: { color: '#fff', textAlign: 'center', fontWeight: 'bold' },
-  linkContainer: { marginTop: 16, flexDirection: 'row', justifyContent: 'space-between' },
-  linkText: { color: '#16a34a', fontWeight: '600' },
+  linkContainer: {
+    marginTop: 16,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  linkText: {
+    color: '#16a34a',
+    fontWeight: '600',
+  },
 });
