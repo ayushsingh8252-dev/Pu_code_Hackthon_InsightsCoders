@@ -13,7 +13,6 @@ public interface VendorLocationRepository extends JpaRepository<VendorLocation, 
     List<VendorLocation> findByVendor_VendorId(UUID vendorId);
 
     Optional<VendorLocation> findByVendor_VendorIdAndIsLiveTrue(UUID vendorId);
-
     Optional<VendorLocation> findByVendor_VendorIdAndIsPrimaryTrue(UUID vendorId);
 
     @Query(value = """
