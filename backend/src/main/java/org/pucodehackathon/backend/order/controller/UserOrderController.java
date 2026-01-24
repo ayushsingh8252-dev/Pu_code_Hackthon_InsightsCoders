@@ -2,15 +2,18 @@ package org.pucodehackathon.backend.order.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.pucodehackathon.backend.helper.UserPrincipal;
+import org.pucodehackathon.backend.order.dto.order.OrderDetailsResponseDto;
 import org.pucodehackathon.backend.order.dto.order.OrderResponseDto;
 import org.pucodehackathon.backend.order.dto.order.PlaceOrderRequestDto;
 import org.pucodehackathon.backend.order.service.OrderService;
+import org.pucodehackathon.backend.order.service.UserOrderService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/user/orders")
@@ -19,6 +22,7 @@ import java.util.List;
 public class UserOrderController {
 
     private final OrderService orderService;
+    private final UserOrderService userOrderService;
 
     @PostMapping("/place")
     public ResponseEntity<OrderResponseDto> placeOrder(
@@ -35,5 +39,19 @@ public class UserOrderController {
     public ResponseEntity<List<OrderResponseDto>> getOrders(Authentication auth) {
         UserPrincipal principal = (UserPrincipal) auth.getPrincipal();
         return ResponseEntity.ok(orderService.getUserOrders(principal.getUser().getId()));
+    }
+
+    @GetMapping("/{orderId}")
+    public ResponseEntity<OrderDetailsResponseDto> getOrderDetails(
+            Authentication authentication,
+            @PathVariable UUID orderId
+    ) {
+        UserPrincipal principal = (UserPrincipal) authentication.getPrincipal();
+        return ResponseEntity.ok(
+                userOrderService.getOrderDetails(
+                        principal.getUser().getId(),
+                        orderId
+                )
+        );
     }
 }

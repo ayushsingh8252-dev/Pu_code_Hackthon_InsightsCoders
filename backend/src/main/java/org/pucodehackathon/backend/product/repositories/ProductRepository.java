@@ -10,6 +10,12 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface ProductRepository extends JpaRepository<Product, UUID> {
+
+    List<Product> findByVendor_VendorIdAndCategory_CategoryIdAndIsAvailableTrue(
+            UUID vendorId,
+            UUID categoryId
+    );
+
     Optional<List<Product>> findByVendor_VendorId(UUID vendorId);
 
     Optional<Product> findByProductId(UUID productId);

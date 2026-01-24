@@ -101,9 +101,12 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public CartResponseDto getCart(UUID userId) {
-        Cart cart = cartRepository.findByUser_Id(userId)
-                .orElseThrow(() -> new RuntimeException("Cart empty"));
-        return mapToResponse(cart);
+        return cartRepository.findByUser_Id(userId)
+                .map(this::mapToResponse)
+                .orElseGet(() -> CartResponseDto.builder()
+                        .items(List.of())
+                        .totalAmount(BigDecimal.ZERO)
+                        .build());
     }
 
     @Override

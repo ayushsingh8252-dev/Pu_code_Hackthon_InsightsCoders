@@ -59,6 +59,9 @@ public class Order {
     @Column(nullable = false)
     private String deliveryPhone;
 
+    private Double deliveryLatitude;
+    private Double deliveryLongitude;
+
     private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)

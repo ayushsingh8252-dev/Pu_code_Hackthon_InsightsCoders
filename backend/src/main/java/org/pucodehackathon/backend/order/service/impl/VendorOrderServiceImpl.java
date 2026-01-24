@@ -13,11 +13,14 @@ import org.pucodehackathon.backend.order.service.VendorOrderService;
 import org.pucodehackathon.backend.product.model.Product;
 import org.pucodehackathon.backend.product.repositories.ProductRepository;
 import org.pucodehackathon.backend.vendor.model.Vendor;
+import org.pucodehackathon.backend.vendor.model.VendorLocation;
+import org.pucodehackathon.backend.vendor.repositories.VendorLocationRepository;
 import org.pucodehackathon.backend.vendor.repositories.VendorRepository;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -29,6 +32,7 @@ public class VendorOrderServiceImpl implements VendorOrderService {
     private final VendorRepository vendorRepository;
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
+    private final VendorLocationRepository vendorLocationRepository;
 
     @Override
     public VendorOrderActionResponseDto acceptOrder(UUID userId, UUID orderId) {
@@ -55,12 +59,22 @@ public class VendorOrderServiceImpl implements VendorOrderService {
         }
 
         order.setStatus(OrderStatus.ACCEPTED);
+        order.setAcceptedAt(java.time.LocalDateTime.now());
         orderRepository.save(order);
+
+        // Get vendor location for map
+        VendorLocation location = vendorLocationRepository.findByVendor_VendorIdAndIsPrimaryTrue(vendor.getVendorId())
+                .or(() -> vendorLocationRepository.findByVendor_VendorIdAndIsLiveTrue(vendor.getVendorId()))
+                .orElse(null);
 
         return VendorOrderActionResponseDto.builder()
                 .orderId(order.getOrderId())
                 .status(order.getStatus())
                 .message("Order accepted successfully")
+                .vendorLatitude(location != null ? location.getLatitude() : null)
+                .vendorLongitude(location != null ? location.getLongitude() : null)
+                .deliveryLatitude(order.getDeliveryLatitude())
+                .deliveryLongitude(order.getDeliveryLongitude())
                 .build();
     }
 
@@ -120,6 +134,8 @@ public class VendorOrderServiceImpl implements VendorOrderService {
                 .vendorName(order.getVendor().getBusinessName())
                 .status(order.getStatus())
                 .totalAmount(order.getTotalAmount())
+                .deliveryLatitude(order.getDeliveryLatitude())
+                .deliveryLongitude(order.getDeliveryLongitude())
                 .items(
                         order.getItems().stream()
                                 .map(i -> OrderItemDto.builder()
@@ -127,6 +143,7 @@ public class VendorOrderServiceImpl implements VendorOrderService {
                                         .productName(i.getProduct().getName())
                                         .quantity(i.getQuantity())
                                         .price(i.getPrice())
+                                        .total(i.getPrice().multiply(BigDecimal.valueOf(i.getQuantity())))
                                         .build())
                                 .toList()
                 )

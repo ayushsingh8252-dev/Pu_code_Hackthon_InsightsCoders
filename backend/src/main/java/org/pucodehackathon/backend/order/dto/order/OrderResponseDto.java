@@ -19,5 +19,7 @@ public class OrderResponseDto {
     private String societyName;
     private String houseNumber;
     private String phoneNumber;
+    private Double deliveryLatitude;
+    private Double deliveryLongitude;
     private List<OrderItemDto> items;
 }

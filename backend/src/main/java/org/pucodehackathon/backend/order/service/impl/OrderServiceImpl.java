@@ -76,6 +76,8 @@ public class OrderServiceImpl implements OrderService {
                         order.setSocietyName(request.getSocietyName() != null ? request.getSocietyName() : addr.getSociety());
                         order.setHouseNumber(request.getHouseNumber() != null ? request.getHouseNumber() : addr.getHouseNo());
                         order.setPhoneNumber(request.getPhoneNumber() != null ? request.getPhoneNumber() : user.getPhoneNumber());
+                        order.setDeliveryLatitude(addr.getLatitude());
+                        order.setDeliveryLongitude(addr.getLongitude());
                     });
         }
 
@@ -83,6 +85,13 @@ public class OrderServiceImpl implements OrderService {
         if (order.getSocietyName() == null) order.setSocietyName(request.getSocietyName());
         if (order.getHouseNumber() == null) order.setHouseNumber(request.getHouseNumber());
         if (order.getPhoneNumber() == null) order.setPhoneNumber(request.getPhoneNumber() != null ? request.getPhoneNumber() : user.getPhoneNumber());
+
+        // If coordinates still null, try to take from first address if available
+        if (order.getDeliveryLatitude() == null && !user.getAddresses().isEmpty()) {
+            org.pucodehackathon.backend.auth.model.UserAddress firstAddr = user.getAddresses().iterator().next();
+            order.setDeliveryLatitude(firstAddr.getLatitude());
+            order.setDeliveryLongitude(firstAddr.getLongitude());
+        }
 
         // Set mandatory fields for Order entity
         String fullAddress = String.format("%s, %s", order.getHouseNumber(), order.getSocietyName());
@@ -133,6 +142,8 @@ public class OrderServiceImpl implements OrderService {
                 .societyName(order.getSocietyName())
                 .houseNumber(order.getHouseNumber())
                 .phoneNumber(order.getPhoneNumber())
+                .deliveryLatitude(order.getDeliveryLatitude())
+                .deliveryLongitude(order.getDeliveryLongitude())
                 .items(
                         order.getItems().stream()
                                 .map(i -> OrderItemDto.builder()
@@ -140,6 +151,7 @@ public class OrderServiceImpl implements OrderService {
                                         .productName(i.getProduct().getName())
                                         .quantity(i.getQuantity())
                                         .price(i.getPrice())
+                                        .total(i.getPrice().multiply(BigDecimal.valueOf(i.getQuantity())))
                                         .build())
                                 .toList()
                 )
