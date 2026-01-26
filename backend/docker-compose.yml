@@ -1,0 +1,51 @@
+version: "3.9"
+
+services:
+  db:
+    image: mysql:8.4
+    container_name: pucode-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: pucode
+      MYSQL_USER: pucode
+      MYSQL_PASSWORD: pucode
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  app:
+    build: .
+    container_name: pucode-backend
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_URL: jdbc:mysql://db:3306/pucode
+      DB_USERNAME: pucode
+      DB_PASSWORD: pucode
+      MAIL_USERNAME: ${MAIL_USERNAME:-}
+      MAIL_PASSWORD: ${MAIL_PASSWORD:-}
+      JWT_SECRET: ${JWT_SECRET:-change-me}
+      JWT_ISSUER: ${JWT_ISSUER:-api.substring.com}
+      JWT_ACCESS_TTL_SECONDS: ${JWT_ACCESS_TTL_SECONDS:-3600}
+      JWT_REFRESH_TTL_SECONDS: ${JWT_REFRESH_TTL_SECONDS:-86400}
+      JWT_REFRESH_COOKIE_NAME: ${JWT_REFRESH_COOKIE_NAME:-refreshToken}
+      JWT_COOKIE_SECURE: ${JWT_COOKIE_SECURE:-false}
+      JWT_COOKIE_HTTP_ONLY: ${JWT_COOKIE_HTTP_ONLY:-true}
+      JWT_COOKIE_SAME_SITE: ${JWT_COOKIE_SAME_SITE:-lax}
+      JWT_COOKIE_DOMAIN: ${JWT_COOKIE_DOMAIN:-localhost}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-test-client-id}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-test-client-secret}
+      GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID:-test-client-id}
+      GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET:-test-client-secret}
+    ports:
+      - "8080:8080"
+
+volumes:
+  db_data:
